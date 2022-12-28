@@ -1,5 +1,7 @@
 ﻿#include "quickplayer.h"
 
+#include <QRandomGenerator>
+
 // test
 #include <QDebug>
 
@@ -12,6 +14,12 @@ QuickPlayer::QuickPlayer(QWidget *parent)
 QuickPlayer::~QuickPlayer()
 {
     mShaderProgram.release();
+}
+
+void QuickPlayer::changeColor()
+{
+    mColorRatio = QRandomGenerator::global()->bounded(0.5f) + 0.5;
+    update();
 }
 
 void QuickPlayer::init()
@@ -62,6 +70,16 @@ void QuickPlayer::initializeGL()
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+    glUseProgram(mShaderProgram.programId());
+
+    mColorLocation = glGetUniformLocation(mShaderProgram.programId(), "u_Color");
+    if (mColorLocation < 0)
+    {
+        qDebug() << "can not find uniform u_Color";
+        return;
+    }
+    glUniform4f(mColorLocation, 0.2f, 0.5f, 0.8f, 1.0f);
 }
 
 void QuickPlayer::resizeGL(int w, int h)
@@ -74,7 +92,7 @@ void QuickPlayer::paintGL()
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(mShaderProgram.programId());
+    glUniform4f(mColorLocation, 0.2f, 0.4f, 0.6f * mColorRatio, 1.0f);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }

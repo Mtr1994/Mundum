@@ -13,6 +13,9 @@ public:
     explicit QuickPlayer(QWidget *parent = nullptr);
     ~QuickPlayer();
 
+    // 测试使用，变化随机颜色
+    void changeColor();
+
 private:
     void init();
 
@@ -27,6 +30,12 @@ private:
 
     /// 指定圆角半径
     float mCornerRadius = 9;
+
+    // 颜色位置
+    int mColorLocation = -1;
+
+    // 颜色变换参数
+    float mColorRatio = 1.0;
 };
 
 #endif // QUICKPLAYER_H

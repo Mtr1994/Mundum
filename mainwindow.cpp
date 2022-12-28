@@ -8,6 +8,7 @@
 #include <QStandardPaths>
 #include <QListView>
 #include <regex>
+#include <QTimer>
 
 // test
 #include <QDebug>
@@ -38,6 +39,11 @@ void MainWindow::init()
 
     connect(ui->btnMin, &QPushButton::clicked, this, [this]{ showMinimized(); });
     connect(ui->btnClose, &QPushButton::clicked, this, [this] { this->close(); });
+
+    // 随机变色
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]{ ui->widgetPlayer->changeColor(); });
+    timer->start(100);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
