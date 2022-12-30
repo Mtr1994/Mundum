@@ -36,6 +36,18 @@ private:
 
     // 颜色变换参数
     float mColorRatio = 1.0;
+
+    // 纹理对象
+    unsigned int mTextureID = -1;
+
+    // 纹理长度
+    int mTextureWidth = 0;
+
+    // 纹理高度
+    int mTextureHeight = 0;
+
+    // 纹理数据
+    unsigned char *mTextureBuffer = nullptr;
 };
 
 #endif // QUICKPLAYER_H

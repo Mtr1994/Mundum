@@ -37,6 +37,7 @@ DESTDIR = ../bin
 SOURCES += \
     Player/quickplayer.cpp \
     Public/appsignal.cpp \
+    Sdk/stb_image/stb_image.cpp \
     Widget/buttondesigned.cpp \
     main.cpp \
     mainwindow.cpp
@@ -44,6 +45,7 @@ SOURCES += \
 HEADERS += \
     Player/quickplayer.h \
     Public/appsignal.h \
+    Sdk/stb_image/stb_image.h \
     Widget/buttondesigned.h \
     mainwindow.h
 

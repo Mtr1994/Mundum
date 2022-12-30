@@ -41,9 +41,11 @@ void MainWindow::init()
     connect(ui->btnClose, &QPushButton::clicked, this, [this] { this->close(); });
 
     // 随机变色
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [this]{ ui->widgetPlayer->changeColor(); });
-    timer->start(100);
+//    QTimer *timer = new QTimer(this);
+//    connect(timer, &QTimer::timeout, this, [this]{ ui->widgetPlayer->changeColor(); });
+//    timer->start(100);
+
+    // 加载图片
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)

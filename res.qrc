@@ -11,5 +11,7 @@
         <file>Resource/qss/style_linux.qss</file>
         <file>Resource/shader/shader.frag</file>
         <file>Resource/shader/shader.vert</file>
+        <file>Resource/shader/shader_rgba.frag</file>
+        <file>Resource/shader/shader_rgba.vert</file>
     </qresource>
 </RCC>
