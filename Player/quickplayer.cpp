@@ -89,63 +89,71 @@ void QuickPlayer::initializeGL()
 
     // 画 纹理 （图片）
     {
-        float vertices[]{
-            //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
-             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+        glUseProgram(mShaderProgram.programId());
+
+        float vertices[]
+        {
+            // ---- 位置 ----       - 纹理坐标 -
+             0.5f,  0.5f, 0.0f,    1.0f, 1.0f,   // 右上
+             0.5f, -0.5f, 0.0f,    1.0f, 0.0f,   // 右下
+            -0.5f, -0.5f, 0.0f,    0.0f, 0.0f,   // 左下
+            -0.5f,  0.5f, 0.0f,    0.0f, 1.0f    // 左上
         };
 
-        unsigned int indices[] = {
+        unsigned int indices[]
+        {
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
         };
 
         unsigned int VBO, VAO, EBO;
         glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
-
         glBindVertexArray(VAO);
 
+        glGenBuffers(1, &VBO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+        glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
         // position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
-        // color attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
         // texture coord attribute
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
 
         // load and create a texture
         // -------------------------
+        glActiveTexture(GL_TEXTURE0);
         glGenTextures(1, &mTextureID);
-        glActiveTexture(mTextureID);
         glBindTexture(GL_TEXTURE_2D, mTextureID); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-        // set the texture wrapping parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        unsigned int ot = glGetUniformLocation(mShaderProgram.programId(), "ourTexture");
+        if (ot < 0)
+        {
+            qDebug() << "can not find uniform ourTexture";
+            return;
+        }
+        glUniform1i(ot, 0);
+
         // set texture filtering parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        stbi_set_flip_vertically_on_load(true);
+        // set the texture wrapping parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// set texture wrapping to GL_REPEAT (default wrapping method)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        glUseProgram(mShaderProgram.programId());
+        stbi_set_flip_vertically_on_load(true);
 
         int channel = 0;
         mTextureBuffer = stbi_load(std::string("Demo9527.png").c_str(), &mTextureWidth, &mTextureHeight, &channel, 3);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mTextureWidth, mTextureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, mTextureBuffer);
 
-        //if (mTextureBuffer) stbi_image_free(mTextureBuffer);
+        if (mTextureBuffer) stbi_image_free(mTextureBuffer);
     }
 }
 
@@ -163,5 +171,6 @@ void QuickPlayer::paintGL()
 
     //glDrawArrays(GL_TRIANGLES, 0, 3);
 
+    glBindTexture(GL_TEXTURE_2D, 1);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
