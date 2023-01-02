@@ -168,8 +168,6 @@ void QuickPlayer::initializeGL()
 
 void QuickPlayer::resizeGL(int w, int h)
 {
-   // glViewport(0, 0, w, h);
-
     if(h <= 0) h = 1;
 
     double rate = (double)mTextureHeight / mTextureWidth;
