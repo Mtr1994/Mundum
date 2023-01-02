@@ -1,7 +1,7 @@
 ﻿QMainWindow#MainWindow
 {
-    min-width: 68em;
-    min-height: 42em;
+    width: 68em;
+    height: 42em;
 }
 
 QWidget
@@ -152,4 +152,14 @@ QLabel
 QLabel[PrefixTitle]
 {
     padding: 0em 1em;
+}
+
+/* QSizeGrip */
+QSizeGrip#widgetSizeGrip
+{
+    min-width: 9px;
+    min-height: 9px;
+    max-width: 9px;
+    max-height: 9px;
+    background-color: transparent;
 }

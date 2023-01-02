@@ -29,7 +29,7 @@ void QuickPlayer::init()
 {
     // 抗锯齿
     QSurfaceFormat surfaceFormat;
-    surfaceFormat.setSamples(32);
+    surfaceFormat.setSamples(24);
     setFormat(surfaceFormat);
 }
 
@@ -94,10 +94,10 @@ void QuickPlayer::initializeGL()
         float vertices[]
         {
             // ---- 位置 ----       - 纹理坐标 -
-             0.5f,  0.5f, 0.0f,    1.0f, 1.0f,   // 右上
-             0.5f, -0.5f, 0.0f,    1.0f, 0.0f,   // 右下
-            -0.5f, -0.5f, 0.0f,    0.0f, 0.0f,   // 左下
-            -0.5f,  0.5f, 0.0f,    0.0f, 1.0f    // 左上
+             1.0f,  1.0f, 0.0f,    1.0f, 1.0f,   // 右上
+             1.0f, -1.0f, 0.0f,    1.0f, 0.0f,   // 右下
+            -1.0f, -1.0f, 0.0f,    0.0f, 0.0f,   // 左下
+            -1.0f,  1.0f, 0.0f,    0.0f, 1.0f    // 左上
         };
 
         unsigned int indices[]
@@ -137,21 +137,30 @@ void QuickPlayer::initializeGL()
             qDebug() << "can not find uniform ourTexture";
             return;
         }
+        // 赋值为 0 是因为这里启用的纹理是 GL_TEXTURE0
         glUniform1i(ot, 0);
 
         // set texture filtering parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        // 使用 GL_LINEAR_MIPMAP_LINEAR 的时候，必须调用  glGenerateMipmap 函数
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         // set the texture wrapping parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// set texture wrapping to GL_REPEAT (default wrapping method)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // set texture wrapping to GL_REPEAT (default wrapping method)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         stbi_set_flip_vertically_on_load(true);
 
         int channel = 0;
         mTextureBuffer = stbi_load(std::string("Demo9527.png").c_str(), &mTextureWidth, &mTextureHeight, &channel, 3);
+//        qDebug() << "Data " << mTextureBuffer[0] << " " << mTextureBuffer[1] << " " << mTextureBuffer[2] << " " <<
+//                     mTextureBuffer[3] << " " << mTextureBuffer[4] << " " << mTextureBuffer[5];
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mTextureWidth, mTextureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, mTextureBuffer);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // 解除绑定，防止其它操作影响到这个纹理
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         if (mTextureBuffer) stbi_image_free(mTextureBuffer);
     }
@@ -159,11 +168,28 @@ void QuickPlayer::initializeGL()
 
 void QuickPlayer::resizeGL(int w, int h)
 {
-    glViewport(0, 0, w, h);
+   // glViewport(0, 0, w, h);
+
+    if(h <= 0) h = 1;
+
+    double rate = (double)mTextureHeight / mTextureWidth;
+    double widthSize = w;
+    double heightSize = w * rate;
+
+    if (h < heightSize)
+    {
+        heightSize = h;
+        widthSize = heightSize / rate;
+    }
+
+    mTextureWidth = widthSize;
+    mTextureHeight = heightSize;
 }
 
 void QuickPlayer::paintGL()
 {
+    glViewport((width() - mTextureWidth) / 2.0, (height() - mTextureHeight) / 2.0, mTextureWidth, mTextureHeight);
+
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -171,6 +197,6 @@ void QuickPlayer::paintGL()
 
     //glDrawArrays(GL_TRIANGLES, 0, 3);
 
-    glBindTexture(GL_TEXTURE_2D, 1);
+    glBindTexture(GL_TEXTURE_2D, mTextureID);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

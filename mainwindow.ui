@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>835</width>
-    <height>518</height>
+    <width>960</width>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,6 +93,15 @@
              <string notr="true"/>
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
              <item row="0" column="0">
               <widget class="QWidget" name="widgetContent" native="true">
                <layout class="QGridLayout" name="gridLayout_7">
@@ -100,6 +109,16 @@
                  <widget class="QuickPlayer" name="widgetPlayer" native="true"/>
                 </item>
                </layout>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSizeGrip" name="widgetSizeGrip" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
               </widget>
              </item>
             </layout>
@@ -324,7 +343,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>835</width>
+     <width>960</width>
      <height>21</height>
     </rect>
    </property>
@@ -340,6 +359,12 @@
    <class>QuickPlayer</class>
    <extends>QWidget</extends>
    <header>./Player/quickplayer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QSizeGrip</class>
+   <extends>QWidget</extends>
+   <header>qsizegrip.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
